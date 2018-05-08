@@ -27,8 +27,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     NSString *localFile;
 }
 
-@property(nonatomic, strong) UIDocumentInteractionController *controller;
+@property(nonatomic, strong, retain) UIDocumentInteractionController *controller;
 @property(nonatomic, strong) CDVViewController *cdvViewController;
+@property(nonatomic, strong) CDVInvokedUrlCommand *cordovaCommand;
+@property(nonatomic, assign) BOOL opened;
 
 - (void) open: (CDVInvokedUrlCommand*)command;
 
