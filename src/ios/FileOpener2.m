@@ -119,7 +119,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 	- (void)documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller {
 		if (!self.opened) {
-			CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"test"];
+			CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"USER_CANCELLED_OPEN"];
 			[self.commandDelegate sendPluginResult:pluginResult callbackId:self.cordovaCommand.callbackId];
 		}
 	}
