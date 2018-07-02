@@ -30,6 +30,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 @synthesize controller = docController;
 
 - (void) open: (CDVInvokedUrlCommand*)command {
+	
+	self.cordovaCommand = command;
+	self.opened = NO;
 
 	NSString *path = [[command.arguments objectAtIndex:0] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSString *contentType = [command.arguments objectAtIndex:1];
@@ -85,7 +88,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		}
 
 		if(wasOpened) {
-			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @""];
+			//pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @""];
 			//NSLog(@"Success");
 		} else {
 			NSDictionary *jsonObj = [ [NSDictionary alloc]
@@ -95,8 +98,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				nil
 			];
 			pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:jsonObj];
+			[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 		}
-		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 	});
 }
 
@@ -105,5 +108,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 @implementation FileOpener2 (UIDocumentInteractionControllerDelegate)
 	- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller {
 		return self.cdvViewController;
+	}
+
+	- (void)documentInteractionController:(UIDocumentInteractionController *)controller
+			willBeginSendingToApplication:(NSString *)application {
+		self.opened = YES;
+		CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: @""];
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:self.cordovaCommand.callbackId];
+	}
+
+	- (void)documentInteractionControllerDidDismissOpenInMenu:(UIDocumentInteractionController *)controller {
+		if (!self.opened) {
+			CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString: @"USER_CANCELLED_OPEN"];
+			[self.commandDelegate sendPluginResult:pluginResult callbackId:self.cordovaCommand.callbackId];
+		}
 	}
 @end
