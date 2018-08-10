@@ -36,10 +36,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 	NSString *path = [[command.arguments objectAtIndex:0] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSString *contentType = [command.arguments objectAtIndex:1];
+	NSArray *coords = [command.arguments objectAtIndex: 2];
 	BOOL showPreview = YES;
 
 	if ([command.arguments count] >= 3) {
-		showPreview = [[command.arguments objectAtIndex:2] boolValue];
+		showPreview = [[command.arguments objectAtIndex:3] boolValue];
 	}
 
 	CDVViewController* cont = (CDVViewController*)[super viewController];
@@ -84,6 +85,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		} else {
 			CDVViewController* cont = self.cdvViewController;
 			CGRect rect = CGRectMake(0, 0, cont.view.bounds.size.width, cont.view.bounds.size.height);
+			
+			if (coords) {
+				rect = CGRectMake(
+					[[coords objectAtIndex:0] floatValue],
+					[[coords objectAtIndex:1] floatValue],
+					[[coords objectAtIndex:2] floatValue],
+					[[coords objectAtIndex:3] floatValue]);
+			}
+			
 			wasOpened = [docController presentOpenInMenuFromRect:rect inView:cont.view animated:YES];
 		}
 
